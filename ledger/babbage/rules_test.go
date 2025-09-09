@@ -17,6 +17,7 @@ package babbage_test
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"math/big"
 	"testing"
 
 	"github.com/blinklabs-io/gouroboros/cbor"
@@ -736,7 +737,7 @@ func TestUtxoValidateOutputTooBigUtxo(t *testing.T) {
 	var testOutputValueGood = mary.MaryTransactionOutputValue{
 		Amount: 1234567,
 	}
-	var tmpBadAssets = map[common.Blake2b224]map[cbor.ByteString]uint64{}
+	var tmpBadAssets = map[common.Blake2b224]map[cbor.ByteString]common.MultiAssetTypeOutput{}
 	// Build too-large asset set
 	// We create 45 random policy IDs and asset names in order to exceed the max value size (4000 bytes)
 	for range 45 {
@@ -748,8 +749,8 @@ func TestUtxoValidateOutputTooBigUtxo(t *testing.T) {
 		if _, err := rand.Read(tmpAssetName); err != nil {
 			t.Fatalf("could not read random bytes")
 		}
-		tmpBadAssets[common.NewBlake2b224(tmpPolicyId)] = map[cbor.ByteString]uint64{
-			cbor.NewByteString(tmpAssetName): 1,
+		tmpBadAssets[common.NewBlake2b224(tmpPolicyId)] = map[cbor.ByteString]common.MultiAssetTypeOutput{
+			cbor.NewByteString(tmpAssetName): big.NewInt(1),
 		}
 	}
 	tmpBadMultiAsset := common.NewMultiAsset[common.MultiAssetTypeOutput](
@@ -1069,16 +1070,16 @@ func TestUtxoValidateCollateralContainsNonAda(t *testing.T) {
 		},
 	}
 	tmpMultiAsset := common.NewMultiAsset[common.MultiAssetTypeOutput](
-		map[common.Blake2b224]map[cbor.ByteString]uint64{
+		map[common.Blake2b224]map[cbor.ByteString]common.MultiAssetTypeOutput{
 			common.Blake2b224Hash([]byte("abcd")): {
-				cbor.NewByteString([]byte("efgh")): 123,
+				cbor.NewByteString([]byte("efgh")): big.NewInt(123),
 			},
 		},
 	)
 	tmpZeroMultiAsset := common.NewMultiAsset[common.MultiAssetTypeOutput](
-		map[common.Blake2b224]map[cbor.ByteString]uint64{
+		map[common.Blake2b224]map[cbor.ByteString]common.MultiAssetTypeOutput{
 			common.Blake2b224Hash([]byte("abcd")): {
-				cbor.NewByteString([]byte("efgh")): 0,
+				cbor.NewByteString([]byte("efgh")): big.NewInt(0),
 			},
 		},
 	)
