@@ -109,9 +109,11 @@ func TestMultiAssetJson(t *testing.T) {
 		var err error
 		var jsonData []byte
 		switch v := test.multiAssetObj.(type) {
-		case MultiAsset[MultiAssetTypeOutput]:
+		case MultiAsset[int64]:
 			jsonData, err = json.Marshal(&v)
-		case MultiAsset[MultiAssetTypeMint]:
+		case MultiAsset[uint64]:
+			jsonData, err = json.Marshal(&v)
+		case MultiAsset[*big.Int]:
 			jsonData, err = json.Marshal(&v)
 		default:
 			t.Fatalf("unexpected test object type: %T", test.multiAssetObj)
@@ -224,9 +226,11 @@ func TestMultiAssetToPlutusData(t *testing.T) {
 	for _, testDef := range testDefs {
 		var tmpData data.PlutusData
 		switch v := testDef.multiAssetObj.(type) {
-		case MultiAsset[MultiAssetTypeOutput]:
+		case MultiAsset[int64]:
 			tmpData = v.ToPlutusData()
-		case MultiAsset[MultiAssetTypeMint]:
+		case MultiAsset[uint64]:
+			tmpData = v.ToPlutusData()
+		case MultiAsset[*big.Int]:
 			tmpData = v.ToPlutusData()
 		default:
 			t.Fatalf("test def multi-asset object was not expected type: %T", v)

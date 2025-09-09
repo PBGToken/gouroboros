@@ -95,26 +95,42 @@ func NewTransactionOutputFromCbor(data []byte) (TransactionOutput, error) {
 }
 
 func DetermineTransactionType(data []byte) (uint, error) {
-	if _, err := NewByronTransactionFromCbor(data); err == nil {
+	var err error
+
+	_, err = NewByronTransactionFromCbor(data)
+	if err == nil {
 		return TxTypeByron, nil
 	}
-	if _, err := NewShelleyTransactionFromCbor(data); err == nil {
+
+	_, err = NewShelleyTransactionFromCbor(data)
+	if err == nil {
 		return TxTypeShelley, nil
 	}
-	if _, err := NewAllegraTransactionFromCbor(data); err == nil {
+
+	_, err = NewAllegraTransactionFromCbor(data)
+	if err == nil {
 		return TxTypeAllegra, nil
 	}
-	if _, err := NewMaryTransactionFromCbor(data); err == nil {
+
+	_, err = NewMaryTransactionFromCbor(data)
+	if err == nil {
 		return TxTypeMary, nil
 	}
-	if _, err := NewAlonzoTransactionFromCbor(data); err == nil {
+
+	_, err = NewAlonzoTransactionFromCbor(data)
+	if err == nil {
 		return TxTypeAlonzo, nil
 	}
-	if _, err := NewBabbageTransactionFromCbor(data); err == nil {
+
+	_, err = NewBabbageTransactionFromCbor(data)
+	if err == nil {
 		return TxTypeBabbage, nil
 	}
-	if _, err := NewConwayTransactionFromCbor(data); err == nil {
+
+	_, err = NewConwayTransactionFromCbor(data)
+	if err == nil {
 		return TxTypeConway, nil
 	}
-	return 0, errors.New("unknown transaction type")
+
+	return 0, fmt.Errorf("unknown transaction type: %v", err)
 }

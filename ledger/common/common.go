@@ -148,17 +148,17 @@ func Blake2b160Hash(data []byte) Blake2b160 {
 
 type (
 	MultiAssetTypeOutput = *big.Int
-	MultiAssetTypeMint   = int64
+	MultiAssetTypeMint   = *big.Int
 )
 
 // MultiAsset represents a collection of policies, assets, and quantities. It's used for
 // TX outputs (uint64) and TX asset minting (int64 to allow for negative values for burning)
-type MultiAsset[T MultiAssetTypeOutput | MultiAssetTypeMint] struct {
+type MultiAsset[T int64 | uint64 | *big.Int] struct {
 	data map[Blake2b224]map[cbor.ByteString]T
 }
 
 // NewMultiAsset creates a MultiAsset with the specified data
-func NewMultiAsset[T MultiAssetTypeOutput | MultiAssetTypeMint](
+func NewMultiAsset[T int64 | uint64 | *big.Int](
 	data map[Blake2b224]map[cbor.ByteString]T,
 ) MultiAsset[T] {
 	if data == nil {
@@ -168,7 +168,7 @@ func NewMultiAsset[T MultiAssetTypeOutput | MultiAssetTypeMint](
 }
 
 // multiAssetJson is a convenience type for marshaling/unmarshaling MultiAsset to/from JSON
-type multiAssetJson[T MultiAssetTypeOutput | MultiAssetTypeMint] struct {
+type multiAssetJson[T int64 | uint64 | *big.Int] struct {
 	Name        string `json:"name"`
 	NameHex     string `json:"nameHex"`
 	PolicyId    string `json:"policyId"`
@@ -406,7 +406,7 @@ func (m *MultiAsset[T]) String() string {
 
 // Helper functions for generic amount handling
 
-func addAmounts[T MultiAssetTypeOutput | MultiAssetTypeMint](a, b T) T {
+func addAmounts[T int64 | uint64 | *big.Int](a, b T) T {
 	switch av := any(a).(type) {
 	case *big.Int:
 		var aInt, bInt *big.Int
@@ -430,7 +430,7 @@ func addAmounts[T MultiAssetTypeOutput | MultiAssetTypeMint](a, b T) T {
 	}
 }
 
-func amountsEqual[T MultiAssetTypeOutput | MultiAssetTypeMint](a, b T) bool {
+func amountsEqual[T int64 | uint64 | *big.Int](a, b T) bool {
 	switch av := any(a).(type) {
 	case *big.Int:
 		bv := any(b).(*big.Int)
@@ -451,7 +451,7 @@ func amountsEqual[T MultiAssetTypeOutput | MultiAssetTypeMint](a, b T) bool {
 	}
 }
 
-func amountIsZero[T MultiAssetTypeOutput | MultiAssetTypeMint](a T) bool {
+func amountIsZero[T int64 | uint64 | *big.Int](a T) bool {
 	switch av := any(a).(type) {
 	case *big.Int:
 		if av == nil {
@@ -465,7 +465,7 @@ func amountIsZero[T MultiAssetTypeOutput | MultiAssetTypeMint](a T) bool {
 	}
 }
 
-func amountToString[T MultiAssetTypeOutput | MultiAssetTypeMint](a T) string {
+func amountToString[T int64 | uint64 | *big.Int](a T) string {
 	switch av := any(a).(type) {
 	case *big.Int:
 		if av == nil {
@@ -479,7 +479,7 @@ func amountToString[T MultiAssetTypeOutput | MultiAssetTypeMint](a T) string {
 	}
 }
 
-func amountToBigInt[T MultiAssetTypeOutput | MultiAssetTypeMint](a T) *big.Int {
+func amountToBigInt[T int64 | uint64 | *big.Int](a T) *big.Int {
 	switch av := any(a).(type) {
 	case *big.Int:
 		if av == nil {
@@ -493,7 +493,7 @@ func amountToBigInt[T MultiAssetTypeOutput | MultiAssetTypeMint](a T) *big.Int {
 	}
 }
 
-func parseAmount[T MultiAssetTypeOutput | MultiAssetTypeMint](s string) (T, error) {
+func parseAmount[T int64 | uint64 | *big.Int](s string) (T, error) {
 	var zero T
 	switch any(zero).(type) {
 	case *big.Int:
