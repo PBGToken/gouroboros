@@ -414,8 +414,10 @@ func (o AlonzoTransactionOutput) Utxorpc() (*utxorpc.TxOutput, error) {
 			for _, assetName := range tmpAssets.Assets(policyId) {
 				amount := tmpAssets.Asset(policyId, assetName)
 				asset := &utxorpc.Asset{
-					Name:       assetName,
-					OutputCoin: amount,
+					Name: assetName,
+				}
+				if amount != nil {
+					asset.OutputCoin = amount.Uint64()
 				}
 				ma.Assets = append(ma.Assets, asset)
 			}
